@@ -65,6 +65,11 @@ bool Memory::IsTerminated() const
     return GetRegister(32) >= static_cast<uint32_t>(Address::MakeText(_textSize));
 }
 
+void Memory::AdvancePC()
+{
+    SetRegister(PC, GetRegister(PC) + 4);
+}
+
 void Memory::Load(Address::BaseType base, std::vector<uint8_t> const& data)
 {
     auto& segment = GetSegmentByBase(base);

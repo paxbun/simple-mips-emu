@@ -111,6 +111,11 @@ class Memory
     bool IsTerminated() const;
 
     /// <summary>
+    /// Advances the value of the PC.
+    /// </summary>
+    void AdvancePC();
+
+    /// <summary>
     /// Loads data to the given segment.
     /// </summary>
     void Load(Address::BaseType base, std::vector<uint8_t> const& data);
