@@ -89,7 +89,73 @@ TickResult TickHandleR(Memory& memory, uint32_t current)
 
 TickResult TickHandleI(Memory& memory, uint32_t current)
 {
-    // TODO
+    uint32_t const operation = (current >> 26) & 0b111111;
+    if (IsOneOf(operation, IFormatOp::ADDIU, IFormatOp::ANDI, IFormatOp::ORI, IFormatOp::SLTIU))
+    {
+        // instruction is I format
+        uint32_t const source      = (current >> 21) & 0b11111;
+        uint32_t const destination = (current >> 16) & 0b11111;
+        uint32_t const immediate   = (current >> 0) & 0xFFFF;
+
+        uint32_t const sourceValue = memory.GetRegister(source);
+
+        uint32_t destinationValue;
+        switch (static_cast<IFormatOp>(operation))
+        {
+            case IFormatOp::ADDIU: destinationValue = sourceValue + immediate; break;
+            case IFormatOp::ANDI: destinationValue = sourceValue & immediate; break;
+            case IFormatOp::ORI: destinationValue = sourceValue | immediate; break;
+            case IFormatOp::SLTIU: destinationValue = sourceValue < immediate; break;
+            default: return TickResult::InvalidInstruction;
+        }
+        memory.SetRegister(destination, destinationValue);
+        memory.AdvancePC();
+
+        return TickResult::Success;
+    }
+    else if (IsOneOf(operation, BIFormatOp::BEQ, BIFormatOp::BNE))
+    {
+        // instruction is BI format
+        uint32_t const pc = memory.GetRegister(Memory::PC);
+
+        uint32_t const source      = (current >> 21) & 0b11111;
+        uint32_t const destination = (current >> 16) & 0b11111;
+        uint32_t const offset      = (current >> 0) & 0xFFFF;
+
+        // TODO
+
+        memory.AdvancePC();
+
+        return TickResult::InvalidInstruction;
+    }
+    else if (IsOneOf(operation, IIFormatOp::LUI))
+    {
+        // instruction is II format
+
+        uint32_t const destination = (current >> 16) & 0b11111;
+        uint32_t const immediate   = (current >> 0) & 0xFFFF;
+
+        memory.SetRegister(destination, immediate << 16);
+        memory.AdvancePC();
+
+        return TickResult::Success;
+    }
+    else if (IsOneOf(operation, OIFormatOp::LB, OIFormatOp::LW, OIFormatOp::SB, OIFormatOp::SW))
+    {
+        // instruction is OI format
+
+        uint32_t const operand1 = (current >> 21) & 0b11111;
+        uint32_t const operand2 = (current >> 16) & 0b11111;
+        uint32_t const offset   = (current >> 0) & 0xFFFF;
+
+        uint32_t const operand1Value = memory.GetRegister(operand1);
+        uint32_t const operand2Value = memory.GetRegister(operand2);
+
+        // TODO
+
+        return TickResult::InvalidInstruction;
+    }
+
     return TickResult::InvalidInstruction;
 }
 
