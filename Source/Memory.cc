@@ -65,6 +65,11 @@ Memory::Memory(uint32_t textSize, uint32_t dataSize) :
     _registerFile.back() = Address::MakeText(0);
 }
 
+bool Memory::IsTerminated() const
+{
+    return GetRegister(32) == static_cast<uint32_t>(Address::MakeText(_textSize));
+}
+
 void Memory::Load(Address::BaseType base, std::vector<uint8_t> const& data)
 {
     auto& segment = GetSegmentByBase(base);
@@ -78,7 +83,8 @@ uint32_t Memory::GetRegister(uint8_t registerIdx) const
 
 void Memory::SetRegister(uint8_t registerIdx, uint32_t newValue)
 {
-    _registerFile.at(registerIdx) = newValue;
+    if (registerIdx != 0)
+        _registerFile.at(registerIdx) = newValue;
 }
 
 uint8_t Memory::GetByte(Address address) const

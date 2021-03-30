@@ -69,15 +69,15 @@ class Memory
     std::array<uint32_t, NumRegisters + 1> _registerFile;
     std::vector<uint8_t>                   _text;
     std::vector<uint8_t>                   _data;
-    size_t                                 _textSize, _dataSize;
+    uint32_t                               _textSize, _dataSize;
 
   public:
-    size_t GetTextSize() const
+    uint32_t GetTextSize() const
     {
         return _textSize;
     }
 
-    size_t GetDataSize() const
+    uint32_t GetDataSize() const
     {
         return _dataSize;
     }
@@ -94,6 +94,11 @@ class Memory
     Memory& operator=(Memory&&) noexcept = default;
 
   public:
+    /// <summary>
+    /// Returns <c>true</c> if PC is at the end of the text segment.
+    /// </summary>
+    bool IsTerminated() const;
+
     /// <summary>
     /// Loads data to the given segment.
     /// </summary>
