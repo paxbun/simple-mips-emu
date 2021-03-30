@@ -10,7 +10,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 # Library definitions
 add_library(simple-mips-emu STATIC
-    ${PROJECT_SOURCE_DIR}/Source/Lib.cc
+    ${PROJECT_SOURCE_DIR}/Source/Memory.cc
 )
 target_include_directories(simple-mips-emu PUBLIC ${PROJECT_SOURCE_DIR}/Public)
 
@@ -41,5 +41,5 @@ if (ENABLE_SIMPLE_MIPS_EMU_TEST)
         unset(TEST_NAME)
     endfunction()
 
-    add_simple_mips_emu_test(AddTest)
+    add_simple_mips_emu_test(MemoryTest)
 endif()
