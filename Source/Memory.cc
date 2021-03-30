@@ -20,12 +20,7 @@ bool Address::Parse(char const* begin, char const* end, Address& out) noexcept
         if (static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) < u)
             return false;
 
-        uint32_t offset = static_cast<uint32_t>(u);
-        if (static_cast<uint32_t>(Address::BaseType::Data) <= offset)
-            out = Address::MakeData(offset - static_cast<uint32_t>(Address::BaseType::Data));
-        else
-            out = Address::MakeText(offset - static_cast<uint32_t>(Address::BaseType::Text));
-
+        out = Address::MakeFromWord(static_cast<uint32_t>(u));
         return true;
     }
     catch (...)

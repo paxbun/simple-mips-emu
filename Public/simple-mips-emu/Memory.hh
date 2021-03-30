@@ -36,6 +36,14 @@ struct Address
         return Address { Address::BaseType::Data, offset };
     }
 
+    constexpr static Address MakeFromWord(uint32_t address) noexcept
+    {
+        if (static_cast<uint32_t>(Address::BaseType::Data) <= address)
+            return Address::MakeData(address - static_cast<uint32_t>(Address::BaseType::Data));
+        else
+            return Address::MakeText(address - static_cast<uint32_t>(Address::BaseType::Text));
+    }
+
     static bool Parse(char const* begin, char const* end, Address& out) noexcept;
 
     BaseType base;
