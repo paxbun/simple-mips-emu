@@ -8,7 +8,8 @@ TEST(MemoryTest, Init)
 {
     Memory memory { 7, 9 };
 
-    for (uint8_t i = 0; i < 32; ++i) ASSERT_EQ(memory.GetRegister(i), 0);
+    for (uint8_t i = 0; i < 31; ++i) ASSERT_EQ(memory.GetRegister(i), 0);
+    ASSERT_EQ(memory.GetRegister(32), Address::MakeText(0));
 
     ASSERT_EQ(memory.GetTextSize(), 7);
     for (uint32_t i = 0; i < 7; ++i) ASSERT_EQ(memory.GetByte(Address::MakeText(i)), 0);

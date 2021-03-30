@@ -31,6 +31,7 @@ Memory::Memory(uint32_t textSize, uint32_t dataSize) :
     _dataSize { dataSize }
 {
     std::fill(std::begin(_registerFile), std::end(_registerFile), 0);
+    _registerFile.back() = Address::MakeText(0);
 }
 
 void Memory::Load(Address::BaseType base, std::vector<uint8_t> const& data)
