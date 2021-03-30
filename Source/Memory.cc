@@ -63,7 +63,7 @@ void Memory::SetByte(Address address, uint8_t byte)
 uint32_t Memory::GetWord(Address address) const
 {
     auto& segment = GetSegmentByBase(address.base);
-    if (static_cast<size_t>(address.offset) + 3 > segment.size())
+    if (static_cast<size_t>(address.offset) + 3 >= segment.size())
         throw std::out_of_range { "address out of range" };
 
     uint32_t       rtn = 0;

@@ -14,10 +14,12 @@ TEST(MemoryTest, Init)
     ASSERT_EQ(memory.GetTextSize(), 7);
     for (uint32_t i = 0; i < 7; ++i) ASSERT_EQ(memory.GetByte(Address::MakeText(i)), 0);
     EXPECT_THROW(memory.GetByte(Address::MakeText(7)), std::out_of_range);
+    EXPECT_THROW(memory.GetWord(Address::MakeText(4)), std::out_of_range);
 
     ASSERT_EQ(memory.GetDataSize(), 9);
     for (uint32_t i = 0; i < 9; ++i) ASSERT_EQ(memory.GetByte(Address::MakeData(i)), 0);
     EXPECT_THROW(memory.GetByte(Address::MakeData(9)), std::out_of_range);
+    EXPECT_THROW(memory.GetWord(Address::MakeText(6)), std::out_of_range);
 }
 
 TEST(MemoryTest, Load)
