@@ -6,6 +6,7 @@
 
 #include <array>
 #include <cstdint>
+#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -46,6 +47,14 @@ struct Address
     constexpr operator uint32_t() const noexcept
     {
         return static_cast<uint32_t>(base) + offset;
+    }
+
+    friend std::ostream& operator<<(std::ostream& os, Address address)
+    {
+        std::ios_base::fmtflags flags = os.flags();
+        os << "0x" << std::hex << static_cast<uint32_t>(address);
+        os.flags(flags);
+        return os;
     }
 };
 
@@ -118,6 +127,16 @@ class Memory
     /// endian format.
     /// </summary>
     void SetWord(Address address, uint32_t word);
+
+    /// <summary>
+    /// Prints the values of the registers.
+    /// </summary>
+    void DumpRegisters(std::ostream& os) const;
+
+    /// <summary>
+    /// Prints words in [start, end]. Note that end is inclusive.
+    /// </summary>
+    void DumpMemory(std::ostream& os, Address start, Address end) const;
 };
 
 #endif

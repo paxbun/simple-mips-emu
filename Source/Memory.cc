@@ -90,3 +90,43 @@ void Memory::SetWord(Address address, uint32_t word)
     ptr[2] = static_cast<uint8_t>(word >> 8 & 0xFF);
     ptr[3] = static_cast<uint8_t>(word >> 0 & 0xFF);
 }
+
+void Memory::DumpRegisters(std::ostream& os) const
+{
+    std::ios_base::fmtflags flags = os.flags();
+
+    os << "Current register values:\n";
+    os << "------------------------------------\n";
+    os << "PC: 0x" << std::hex << GetRegister(32) << '\n';
+    os << "Registers:\n";
+
+    for (uint32_t idx = 0; idx < 32; ++idx)
+    {
+        os << "R" << std::dec << idx << ": 0x" << std::hex << GetRegister(idx) << '\n';
+    }
+
+    os.flags(flags);
+}
+
+void Memory::DumpMemory(std::ostream& os, Address start, Address end) const
+{
+    if (start.base != end.base)
+        throw std::invalid_argument { "invalid memory range" };
+
+    if (start.offset > end.offset)
+        throw std::invalid_argument { "invalid memory range" };
+
+    std::ios_base::fmtflags flags = os.flags();
+
+    os << std::hex;
+    os << "Memory content [" << start << ".." << end << "]:\n";
+    os << "------------------------------------\n";
+
+    for (uint32_t offset = start.offset; offset < end.offset; offset += 4)
+    {
+        Address current { start.base, offset };
+        os << current << ": 0x" << GetWord(current) << '\n';
+    }
+
+    os.flags(flags);
+}
