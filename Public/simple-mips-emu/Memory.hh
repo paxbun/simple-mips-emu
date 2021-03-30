@@ -73,6 +73,9 @@ struct Address
 /// </summary>
 class Memory
 {
+  public:
+    constexpr static uint32_t PC = NumRegisters;
+
   private:
     std::array<uint32_t, NumRegisters + 1> _registerFile;
     std::vector<uint8_t>                   _text;
