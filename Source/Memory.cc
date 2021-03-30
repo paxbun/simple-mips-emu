@@ -60,17 +60,17 @@ Memory::Memory(uint32_t textSize, uint32_t dataSize) :
     _registerFile.back() = Address::MakeText(0);
 }
 
-bool Memory::IsTerminated() const
+bool Memory::IsTerminated() const noexcept
 {
     return GetRegister(32) >= static_cast<uint32_t>(Address::MakeText(_textSize));
 }
 
-void Memory::AdvancePC()
+void Memory::AdvancePC() noexcept
 {
     SetRegister(PC, GetRegister(PC) + 4);
 }
 
-void Memory::Load(Address::BaseType base, std::vector<uint8_t> const& data)
+void Memory::Load(Address::BaseType base, std::vector<uint8_t> const& data) noexcept
 {
     auto& segment = GetSegmentByBase(base);
     std::copy_n(data.begin(), std::min(data.size(), segment.size()), segment.begin());

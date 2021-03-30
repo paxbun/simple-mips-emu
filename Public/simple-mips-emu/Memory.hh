@@ -108,17 +108,17 @@ class Memory
     /// <summary>
     /// Returns <c>true</c> if PC is at the end of the text segment.
     /// </summary>
-    bool IsTerminated() const;
+    bool IsTerminated() const noexcept;
 
     /// <summary>
     /// Advances the value of the PC.
     /// </summary>
-    void AdvancePC();
+    void AdvancePC() noexcept;
 
     /// <summary>
     /// Loads data to the given segment.
     /// </summary>
-    void Load(Address::BaseType base, std::vector<uint8_t> const& data);
+    void Load(Address::BaseType base, std::vector<uint8_t> const& data) noexcept;
 
     /// <summary>
     /// Returns the value of the given register. Note that R32 is PC.
