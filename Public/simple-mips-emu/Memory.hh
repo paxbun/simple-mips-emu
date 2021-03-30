@@ -115,12 +115,12 @@ class Memory
     /// <summary>
     /// Returns the value of the given register. Note that R32 is PC.
     /// </summary>
-    uint32_t GetRegister(uint8_t registerIdx) const;
+    uint32_t GetRegister(uint32_t registerIdx) const;
 
     /// <summary>
     /// Assign the given word to the given reigster. Note that R32 is PC.
     /// </summary>
-    void SetRegister(uint8_t registerIdx, uint32_t newValue);
+    void SetRegister(uint32_t registerIdx, uint32_t newValue);
 
     /// <summary>
     /// Returns the byte at the given address.

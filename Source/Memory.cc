@@ -71,12 +71,12 @@ void Memory::Load(Address::BaseType base, std::vector<uint8_t> const& data)
     std::copy_n(data.begin(), std::min(data.size(), segment.size()), segment.begin());
 }
 
-uint32_t Memory::GetRegister(uint8_t registerIdx) const
+uint32_t Memory::GetRegister(uint32_t registerIdx) const
 {
     return _registerFile.at(registerIdx);
 }
 
-void Memory::SetRegister(uint8_t registerIdx, uint32_t newValue)
+void Memory::SetRegister(uint32_t registerIdx, uint32_t newValue)
 {
     if (registerIdx != 0)
         _registerFile.at(registerIdx) = newValue;
