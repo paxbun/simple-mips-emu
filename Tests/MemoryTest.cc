@@ -45,3 +45,38 @@ TEST(MemoryTest, Register)
     memory.SetRegister(18, 0x1234);
     ASSERT_EQ(memory.GetRegister(18), 0x1234);
 }
+
+TEST(MemoryTest, ValidAddressParse)
+{
+    {
+        const char input[] = "0x12345678";
+
+        Address addr;
+        ASSERT_TRUE(Address::Parse(input, input + strlen(input), addr));
+        ASSERT_EQ(addr.base, Address::BaseType::Data);
+        ASSERT_EQ(addr.offset, 0x02345678);
+    }
+
+    {
+        const char input[] = "0x400000:0x400010";
+
+        auto    colonPos = strcspn(input, ":");
+        Address addr;
+
+        ASSERT_TRUE(Address::Parse(input, input + colonPos, addr));
+        ASSERT_EQ(addr.base, Address::BaseType::Text);
+        ASSERT_EQ(addr.offset, 0);
+
+        ASSERT_TRUE(Address::Parse(input + colonPos + 1, input + strlen(input), addr));
+        ASSERT_EQ(addr.base, Address::BaseType::Text);
+        ASSERT_EQ(addr.offset, 0x10);
+    }
+}
+
+TEST(MemoryTest, InvalidAddressParse)
+{
+    const char inputs[][20] = { "0xkhjasd129678", "Hello world!", "128763", "0x12345678909" };
+
+    Address addr;
+    for (auto& input : inputs) ASSERT_FALSE(Address::Parse(input, input + strlen(input), addr));
+}

@@ -3,6 +3,37 @@
 
 #include <simple-mips-emu/Memory.hh>
 
+#include <regex>
+#include <string>
+
+bool Address::Parse(char const* begin, char const* end, Address& out) noexcept
+{
+    std::regex  re { "^0x([0-9a-dA-D]+)$" };
+    std::cmatch match;
+
+    if (!std::regex_match(begin, end, match, re))
+        return false;
+
+    try
+    {
+        uint64_t u = std::stoull(match[1].str(), nullptr, 16);
+        if (static_cast<uint64_t>(std::numeric_limits<uint32_t>::max()) < u)
+            return false;
+
+        uint32_t offset = static_cast<uint32_t>(u);
+        if (static_cast<uint32_t>(Address::BaseType::Data) <= offset)
+            out = Address::MakeData(offset - static_cast<uint32_t>(Address::BaseType::Data));
+        else
+            out = Address::MakeText(offset - static_cast<uint32_t>(Address::BaseType::Text));
+
+        return true;
+    }
+    catch (...)
+    {
+        return false;
+    }
+}
+
 std::vector<uint8_t>& Memory::GetSegmentByBase(Address::BaseType base)
 {
     if (base == Address::BaseType::Text)

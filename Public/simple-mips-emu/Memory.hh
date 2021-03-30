@@ -36,6 +36,8 @@ struct Address
         return Address { Address::BaseType::Data, offset };
     }
 
+    static bool Parse(char const* begin, char const* end, Address& out) noexcept;
+
     BaseType base;
     uint32_t offset;
 
