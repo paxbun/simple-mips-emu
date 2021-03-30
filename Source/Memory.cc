@@ -67,7 +67,7 @@ Memory::Memory(uint32_t textSize, uint32_t dataSize) :
 
 bool Memory::IsTerminated() const
 {
-    return GetRegister(32) == static_cast<uint32_t>(Address::MakeText(_textSize));
+    return GetRegister(32) >= static_cast<uint32_t>(Address::MakeText(_textSize));
 }
 
 void Memory::Load(Address::BaseType base, std::vector<uint8_t> const& data)
