@@ -71,7 +71,7 @@ IncludeCategories:
     Priority: 3
 IncludeIsMainRegex: '(Test)?$'
 
-IndentCaseLabels: false
+IndentCaseLabels: true
 IndentGotoLabels: false
 IndentPPDirectives: AfterHash
 IndentWidth: 4
