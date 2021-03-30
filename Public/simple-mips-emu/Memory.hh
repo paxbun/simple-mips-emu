@@ -75,6 +75,7 @@ class Memory
 {
   public:
     constexpr static uint32_t PC = NumRegisters;
+    constexpr static uint32_t RA = NumRegisters - 1;
 
   private:
     std::array<uint32_t, NumRegisters + 1> _registerFile;
