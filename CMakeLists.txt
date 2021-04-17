@@ -11,6 +11,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 # Library definitions
 add_library(simple-mips-emu STATIC
     ${PROJECT_SOURCE_DIR}/Source/Emulation.cc
+    ${PROJECT_SOURCE_DIR}/Source/File.cc
     ${PROJECT_SOURCE_DIR}/Source/Memory.cc
 )
 target_include_directories(simple-mips-emu PUBLIC ${PROJECT_SOURCE_DIR}/Public)
