@@ -8,9 +8,17 @@ namespace
 {
 
 template <typename T, typename... Ts>
-inline bool IsOneOf(T value, Ts... ts)
+inline bool IsOneOf(T value, Ts... ts) noexcept
 {
     return ((static_cast<T>(ts) == value) || ...);
+}
+
+constexpr uint32_t SignExtend(uint32_t value, uint32_t numBits) noexcept
+{
+    // 0  if value >= 0
+    // -1 otherwise
+    uint32_t const mask = ~(value >> (numBits - 1)) + 1;
+    return value | (mask << numBits);
 }
 
 TickResult TickHandleR(Memory& memory, uint32_t current)
@@ -118,15 +126,27 @@ TickResult TickHandleI(Memory& memory, uint32_t current)
         // instruction is BI format
         uint32_t const pc = memory.GetRegister(Memory::PC);
 
-        uint32_t const source      = (current >> 21) & 0b11111;
-        uint32_t const destination = (current >> 16) & 0b11111;
-        uint32_t const offset      = (current >> 0) & 0xFFFF;
+        uint32_t const source1 = (current >> 21) & 0b11111;
+        uint32_t const source2 = (current >> 16) & 0b11111;
+        uint32_t const offset  = SignExtend((current >> 0) & 0xFFFF, 16);
 
-        // TODO
+        uint32_t const source1Value = memory.GetRegister(source1);
+        uint32_t const source2Value = memory.GetRegister(source2);
 
-        memory.AdvancePC();
+        if ((source1Value == source2Value)
+            == (static_cast<BIFormatOp>(operation) == BIFormatOp::BEQ))
+        {
+            uint32_t const pcValue    = memory.GetRegister(Memory::PC);
+            uint32_t const newPcValue = pcValue + offset * 4;
 
-        return TickResult::InvalidInstruction;
+            memory.SetRegister(Memory::PC, newPcValue);
+        }
+        else
+        {
+            memory.AdvancePC();
+        }
+
+        return TickResult::Success;
     }
     else if (IsOneOf(operation, IIFormatOp::LUI))
     {
@@ -146,14 +166,42 @@ TickResult TickHandleI(Memory& memory, uint32_t current)
 
         uint32_t const operand1 = (current >> 21) & 0b11111;
         uint32_t const operand2 = (current >> 16) & 0b11111;
-        uint32_t const offset   = (current >> 0) & 0xFFFF;
+        uint32_t const offset   = SignExtend((current >> 0) & 0xFFFF, 16);
 
         uint32_t const operand1Value = memory.GetRegister(operand1);
-        uint32_t const operand2Value = memory.GetRegister(operand2);
+        Address const  address       = Address::MakeFromWord(operand1Value + offset);
 
-        // TODO
+        switch (static_cast<OIFormatOp>(operation))
+        {
+            case OIFormatOp::LB:
+            {
+                uint32_t const value = SignExtend(memory.GetByte(address), 8);
+                memory.SetRegister(operand2, value);
+                break;
+            }
+            case OIFormatOp::LW:
+            {
+                uint32_t const value = memory.GetWord(address);
+                memory.SetRegister(operand2, value);
+                break;
+            }
+            case OIFormatOp::SB:
+            {
+                uint32_t const value = memory.GetRegister(operand2);
+                memory.SetByte(address, static_cast<uint8_t>(value & 0xFF));
+                break;
+            }
+            case OIFormatOp::SW:
+            {
+                uint32_t const value = memory.GetRegister(operand2);
+                memory.SetWord(address, value);
+                break;
+            }
+            default: return TickResult::InvalidInstruction;
+        }
 
-        return TickResult::InvalidInstruction;
+        memory.AdvancePC();
+        return TickResult::Success;
     }
 
     return TickResult::InvalidInstruction;
@@ -162,16 +210,18 @@ TickResult TickHandleI(Memory& memory, uint32_t current)
 TickResult TickHandleJ(Memory& memory, uint32_t current)
 {
     uint32_t const operation = (current >> 26) & 0b111111;
-    uint32_t const target    = current & 0x03FFFFFF;
+    uint32_t const pcValue   = memory.GetRegister(Memory::PC);
+    uint32_t const target    = ((current & 0x03FFFFFF) << 2) | (pcValue & 0xF0000000);
+
     if (operation == static_cast<uint32_t>(JFormatOp::J))
     {
-        memory.SetRegister(Memory::PC, target * 4);
+        memory.SetRegister(Memory::PC, target);
         return TickResult::Success;
     }
     else if (operation == static_cast<uint32_t>(JFormatOp::JAL))
     {
-        memory.SetRegister(Memory::RA, memory.GetRegister(Memory::PC) + 4);
-        memory.SetRegister(Memory::PC, target * 4);
+        memory.SetRegister(Memory::RA, pcValue + 4);
+        memory.SetRegister(Memory::PC, target);
         return TickResult::Success;
     }
 
