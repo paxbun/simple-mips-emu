@@ -145,7 +145,7 @@ class Memory
     /// <summary>
     /// Returns the word at the given address in big endian.
     /// </summary>
-    uint32_t GetWord(Address address) const;
+    uint32_t GetWord(Address address) const noexcept;
 
     /// <summary>
     /// Assign the given word to the given memory location. Note that the word is interpreted in big
