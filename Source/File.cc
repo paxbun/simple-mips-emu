@@ -49,8 +49,6 @@ FileReadResult ReadFile(std::istream& is)
         return CannotRead { FileReadError::Type::SectionSizeDoesNotMatch };
 
     return CanRead {
-        words[0],
-        words[1],
         std::vector(words.begin() + 2, words.begin() + 2 + words[0]),
         std::vector(words.end() - words[1], words.end()),
     };

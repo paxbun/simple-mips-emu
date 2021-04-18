@@ -27,8 +27,6 @@ struct FileReadError
 
 struct CanRead
 {
-    uint32_t              textSize;
-    uint32_t              dataSize;
     std::vector<uint32_t> text;
     std::vector<uint32_t> data;
 };
