@@ -85,9 +85,13 @@ void Memory::SetRegister(uint32_t registerIdx, uint32_t newValue)
         _registerFile.at(registerIdx) = newValue;
 }
 
-uint8_t Memory::GetByte(Address address) const
+uint8_t Memory::GetByte(Address address) const noexcept
 {
-    return GetSegmentByBase(address.base).at(address.offset);
+    auto& segment = GetSegmentByBase(address.base);
+    if (address.offset < segment.size())
+        return segment[address.offset];
+    else
+        return 0;
 }
 
 void Memory::SetByte(Address address, uint8_t byte)

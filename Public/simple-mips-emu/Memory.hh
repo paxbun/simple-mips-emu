@@ -135,7 +135,7 @@ class Memory
     /// <summary>
     /// Returns the byte at the given address.
     /// </summary>
-    uint8_t GetByte(Address address) const;
+    uint8_t GetByte(Address address) const noexcept;
 
     /// <summary>
     /// Assign the given byte to the given memory location.
