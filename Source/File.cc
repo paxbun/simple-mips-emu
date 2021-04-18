@@ -1,9 +1,9 @@
 // Copyright (c) 2021 Chanjung Kim. All rights reserved.
 // Licensed under the MIT License.
 
+#include <simple-mips-emu/Common.hh>
 #include <simple-mips-emu/File.hh>
 
-#include <charconv>
 #include <filesystem>
 #include <fstream>
 
@@ -59,16 +59,7 @@ FileReadResult ReadFile(std::istream& is)
             == line.end())
             continue;
 
-        if (line.size() < 3)
-            return CannotRead { FileReadError::Type::InvalidFormat };
-
-        if (line[0] != '0' || line[1] != 'x')
-            return CannotRead { FileReadError::Type::InvalidFormat };
-
-        auto result = std::from_chars(
-            std::addressof(line[2]), std::addressof(line[line.size()]), value, 16);
-
-        if (result.ec != std::errc {})
+        if (!ParseWord(std::addressof(line[0]), std::addressof(line[line.size()]), value))
             return CannotRead { FileReadError::Type::InvalidFormat };
 
         words.push_back(value);
