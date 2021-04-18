@@ -1,4 +1,4 @@
-# Copyright (c) 2021 Chanjung Kim (paxbun). All rights reserved.
+# Copyright (c) 2021 Chanjung Kim. All rights reserved.
 # Licensed under the MIT License.
 
 cmake_minimum_required(VERSION 3.13)

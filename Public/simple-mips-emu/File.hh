@@ -1,4 +1,4 @@
-// Copyright (c) 2021 Chanjung Kim (paxbun). All rights reserved.
+// Copyright (c) 2021 Chanjung Kim. All rights reserved.
 // Licensed under the MIT License.
 
 #ifndef SIMPLE_MIPS_EMU_FILE_HH
