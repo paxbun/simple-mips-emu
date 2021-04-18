@@ -8,7 +8,7 @@
 
 bool Address::Parse(char const* begin, char const* end, Address& out) noexcept
 {
-    std::regex  re { "^0x([0-9a-dA-D]+)$" };
+    std::regex  re { "^0x([0-9a-fA-F]+)$" };
     std::cmatch match;
 
     if (!std::regex_match(begin, end, match, re))
@@ -62,7 +62,7 @@ Memory::Memory(uint32_t textSize, uint32_t dataSize) :
 
 bool Memory::IsTerminated() const noexcept
 {
-    return GetRegister(32) >= static_cast<uint32_t>(Address::MakeText(_textSize));
+    return GetRegister(PC) >= static_cast<uint32_t>(Address::MakeText(_textSize));
 }
 
 void Memory::AdvancePC() noexcept
@@ -134,10 +134,10 @@ void Memory::DumpRegisters(std::ostream& os) const
 
     os << "Current register values:\n";
     os << "------------------------------------\n";
-    os << "PC: 0x" << std::hex << GetRegister(32) << '\n';
+    os << "PC: 0x" << std::hex << GetRegister(PC) << '\n';
     os << "Registers:\n";
 
-    for (uint32_t idx = 0; idx < 32; ++idx)
+    for (uint32_t idx = 0; idx < NumRegisters; ++idx)
     {
         os << "R" << std::dec << idx << ": 0x" << std::hex << GetRegister(idx) << '\n';
     }
