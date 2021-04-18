@@ -10,7 +10,8 @@ bool Address::Parse(char const* begin, char const* end, Address& out) noexcept
     if (!ParseWord(begin, end, word))
         return false;
 
-    return MakeFromWord(word);
+    out = MakeFromWord(word);
+    return true;
 }
 
 std::vector<uint8_t>& Memory::GetSegmentByBase(Address::BaseType base)
