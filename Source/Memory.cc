@@ -42,7 +42,18 @@ Memory::Memory(uint32_t textSize, uint32_t dataSize) :
     _dataSize { dataSize }
 {
     std::fill(std::begin(_registerFile), std::end(_registerFile), 0);
-    _registerFile.back() = Address::MakeText(0);
+    _registerFile[PC] = Address::MakeText(0);
+}
+
+Memory::Memory(std::vector<uint8_t>&& text, std::vector<uint8_t>&& data) noexcept :
+    _registerFile {},
+    _text(std::move(text)),
+    _data(std::move(data)),
+    _textSize { static_cast<uint32_t>(_text.size()) },
+    _dataSize { static_cast<uint32_t>(_data.size()) }
+{
+    std::fill(std::begin(_registerFile), std::end(_registerFile), 0);
+    _registerFile[PC] = Address::MakeText(0);
 }
 
 bool Memory::IsTerminated() const noexcept

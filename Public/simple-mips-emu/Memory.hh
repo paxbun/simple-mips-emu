@@ -100,6 +100,7 @@ class Memory
 
   public:
     Memory(uint32_t textSize, uint32_t dataSize);
+    Memory(std::vector<uint8_t>&& text, std::vector<uint8_t>&& data) noexcept;
     Memory(Memory const&)     = default;
     Memory(Memory&&) noexcept = default;
     Memory& operator=(Memory const&) = default;
