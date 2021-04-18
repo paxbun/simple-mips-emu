@@ -110,10 +110,28 @@ TickResult TickHandleI(Memory& memory, uint32_t current)
         uint32_t destinationValue;
         switch (static_cast<IFormatOp>(operation))
         {
-            case IFormatOp::ADDIU: destinationValue = sourceValue + immediate; break;
-            case IFormatOp::ANDI: destinationValue = sourceValue & immediate; break;
-            case IFormatOp::ORI: destinationValue = sourceValue | immediate; break;
-            case IFormatOp::SLTIU: destinationValue = sourceValue < immediate; break;
+            case IFormatOp::ADDIU:
+            {
+                destinationValue = sourceValue + SignExtend(immediate, 16);
+                break;
+            }
+            case IFormatOp::ANDI:
+            {
+                destinationValue = sourceValue & immediate;
+                break;
+            }
+            case IFormatOp::ORI:
+            {
+                destinationValue = sourceValue | immediate;
+                break;
+            }
+            case IFormatOp::SLTIU:
+            {
+                destinationValue
+                    = static_cast<uint32_t>(static_cast<int32_t>(sourceValue)
+                                            < static_cast<int32_t>(SignExtend(immediate, 16)));
+                break;
+            }
             default: return TickResult::InvalidInstruction;
         }
         memory.SetRegister(destination, destinationValue);
@@ -136,7 +154,7 @@ TickResult TickHandleI(Memory& memory, uint32_t current)
         if ((source1Value == source2Value)
             == (static_cast<BIFormatOp>(operation) == BIFormatOp::BEQ))
         {
-            uint32_t const pcValue    = memory.GetRegister(Memory::PC);
+            uint32_t const pcValue = memory.GetRegister(Memory::PC);
             // PC is not advanced yet
             uint32_t const newPcValue = pcValue + 4 + offset * 4;
 
