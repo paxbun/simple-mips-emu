@@ -463,3 +463,64 @@ TEST(EmulationTest, SimpleLoop)
 
     ASSERT_EQ(memory.GetRegister(8), -6);
 }
+
+/*
+    .data
+string:
+    .word 0x48656C6C
+    .word 0x6F2C2077
+    .word 0x6F726C64
+    .word 0x21000000
+    .text
+main:
+    la     $8,   string
+loop:
+    lb     $1,   0($8)
+    beq    $0,   $1,   end
+    addiu  $8,   $8,   1
+    j      loop
+end:
+    la     $9,   string
+    subu   $8,   $8,   $9
+*/
+
+/*
+    int main() {
+        int r8 = strlen("Hello, world!");
+    }
+*/
+
+char const _strlen[] = R"===(
+    0x1c
+    0x10
+    0x3c081000
+    0x81010000
+    0x10010002
+    0x25080001
+    0x8100001
+    0x3c091000
+    0x1094023
+    0x48656c6c
+    0x6f2c2077
+    0x6f726c64
+    0x21000000
+)===";
+
+TEST(EmulationTest, Strlen)
+{
+    std::istringstream iss { _strlen };
+
+    FileReadResult result = ReadFile(iss);
+    ASSERT_TRUE(std::holds_alternative<CanRead>(result));
+
+    CanRead file = std::get<CanRead>(result);
+    Memory  memory { std::move(file.text), std::move(file.data) };
+
+    while (!memory.IsTerminated())
+    {
+        auto result = Tick(memory);
+        ASSERT_EQ(result, TickResult::Success);
+    }
+
+    ASSERT_EQ(memory.GetRegister(8), 13);
+}
