@@ -66,7 +66,6 @@ TickResult TickHandleR(Memory& memory, uint32_t current)
         uint32_t const source = (current >> 21) & 0b11111;
 
         memory.SetRegister(Memory::PC, memory.GetRegister(source));
-        memory.AdvancePC();
 
         return TickResult::Success;
     }
