@@ -4,6 +4,8 @@
 #include <simple-mips-emu/Common.hh>
 #include <simple-mips-emu/Memory.hh>
 
+#include <algorithm>
+
 bool Address::Parse(char const* begin, char const* end, Address& out) noexcept
 {
     uint32_t word;
