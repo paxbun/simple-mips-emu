@@ -149,10 +149,7 @@ void Memory::DumpRegisters(std::ostream& os) const
 
 void Memory::DumpMemory(std::ostream& os, Address start, Address end) const
 {
-    if (start.base != end.base)
-        throw std::invalid_argument { "invalid memory range" };
-
-    if (start.offset > end.offset)
+    if (static_cast<uint32_t>(start) > static_cast<uint32_t>(end))
         throw std::invalid_argument { "invalid memory range" };
 
     std::ios_base::fmtflags flags = os.flags();
@@ -161,10 +158,10 @@ void Memory::DumpMemory(std::ostream& os, Address start, Address end) const
     os << "Memory content [" << start << ".." << end << "]:\n";
     os << "------------------------------------\n";
 
-    for (uint32_t offset = start.offset; offset < end.offset; offset += 4)
+    for (uint32_t current = start; current <= end; current += 4)
     {
-        Address current { start.base, offset };
-        os << current << ": 0x" << GetWord(current) << '\n';
+        Address address = Address::MakeFromWord(current);
+        os << address << ": 0x" << GetWord(address) << '\n';
     }
 
     os.flags(flags);
