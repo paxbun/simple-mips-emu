@@ -4,6 +4,7 @@
 #include <simple-mips-emu/Common.hh>
 #include <simple-mips-emu/File.hh>
 
+#include <algorithm>
 #include <filesystem>
 #include <fstream>
 
