@@ -412,3 +412,54 @@ TEST(EmulationTest, SelectionSort)
         // clang-format on
     }
 }
+
+/*
+    .text
+main:
+    addiu   $8,  $0,  5
+while_cond:
+    sltiu   $1,  $8,  -5
+    bne     $1,  $0,  end
+while_body:
+    addiu   $8,  $8,  -1
+    j       while_cond
+end:
+*/
+
+/*
+    int main() {
+        int32_t r8 = 5;
+        while (r8 >= -5) {
+            r8 -= 1;
+        }
+    }
+*/
+
+char const _simpleLoop[] = R"===(
+    0x14
+    0x0
+    0x24080005
+    0x2d01fffb
+    0x14200002
+    0x2508ffff
+    0x8100001
+)===";
+
+TEST(EmulationTest, SimpleLoop)
+{
+    std::istringstream iss { _simpleLoop };
+
+    FileReadResult result = ReadFile(iss);
+    ASSERT_TRUE(std::holds_alternative<CanRead>(result));
+
+    CanRead file = std::get<CanRead>(result);
+    Memory  memory { std::move(file.text), std::move(file.data) };
+
+    while (!memory.IsTerminated())
+    {
+        auto result = Tick(memory);
+        ASSERT_EQ(result, TickResult::Success);
+    }
+
+    ASSERT_EQ(memory.GetRegister(8), -6);
+}
