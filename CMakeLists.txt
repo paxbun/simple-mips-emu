@@ -44,6 +44,7 @@ if (ENABLE_SIMPLE_MIPS_EMU_TEST)
         unset(TEST_NAME)
     endfunction()
 
-    add_simple_mips_emu_test(MemoryTest)
+    add_simple_mips_emu_test(EmulationTest)
     add_simple_mips_emu_test(FileTest)
+    add_simple_mips_emu_test(MemoryTest)
 endif()
