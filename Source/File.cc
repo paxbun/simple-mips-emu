@@ -18,11 +18,16 @@ FileReadResult ReadFile(std::filesystem::path const& path)
     if (!ifs)
         return CannotRead { FileReadError::Type::FileDoesNotExist };
 
+    return ReadFile(ifs);
+}
+
+FileReadResult ReadFile(std::istream& is)
+{
     std::vector<uint32_t> words;
 
     std::string line;
     uint32_t    value;
-    while (std::getline(ifs, line))
+    while (std::getline(is, line))
     {
         if (line.size() < 3)
             return CannotRead { FileReadError::Type::InvalidFormat };

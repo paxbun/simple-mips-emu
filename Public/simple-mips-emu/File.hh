@@ -38,8 +38,19 @@ struct CannotRead
     FileReadError error;
 };
 
+/// <summary>
+/// The union of all possible return values of <c>ReadFile</c>
+/// </summary>
 using FileReadResult = std::variant<CanRead, CannotRead>;
 
+/// <summary>
+/// Reads an executable from the given path.
+/// </summary>
 FileReadResult ReadFile(std::filesystem::path const& path);
+
+/// <summary>
+/// Reads an executable from the given stream.
+/// </summary>
+FileReadResult ReadFile(std::istream& is);
 
 #endif
