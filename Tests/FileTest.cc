@@ -8,8 +8,8 @@
 #include <sstream>
 
 char const _validCase[] = R"===(
-    0x2
-    0x4
+    0x8
+    0x10
 
     0x1234
 0x23452a45
@@ -72,8 +72,8 @@ TEST(FileTest, InvalidFormat)
 }
 
 char const _invalidSectionSize[] = R"===(
-    0x2
-    0x4
+    0x8
+    0x10
     0x1236
 )===";
 

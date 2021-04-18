@@ -68,11 +68,17 @@ FileReadResult ReadFile(std::istream& is)
     if (words.size() < 2)
         return CannotRead { FileReadError::Type::SectionSizeDoesNotMatch };
 
-    if (words[0] + words[1] != static_cast<uint32_t>(words.size() - 2))
+    if (words[0] % 4 != 0)
+        return CannotRead { FileReadError::Type::SectionSizeDoesNotMatch };
+
+    if (words[1] % 4 != 0)
+        return CannotRead { FileReadError::Type::SectionSizeDoesNotMatch };
+
+    if (words[0] + words[1] != 4 * static_cast<uint32_t>(words.size() - 2))
         return CannotRead { FileReadError::Type::SectionSizeDoesNotMatch };
 
     return CanRead {
-        MakeBytesFromWords(words.begin() + 2, words.begin() + 2 + words[0]),
-        MakeBytesFromWords(words.end() - words[1], words.end()),
+        MakeBytesFromWords(words.begin() + 2, words.begin() + 2 + (words[0] / 4)),
+        MakeBytesFromWords(words.end() - (words[1] / 4), words.end()),
     };
 }
