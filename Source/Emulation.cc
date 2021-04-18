@@ -137,7 +137,8 @@ TickResult TickHandleI(Memory& memory, uint32_t current)
             == (static_cast<BIFormatOp>(operation) == BIFormatOp::BEQ))
         {
             uint32_t const pcValue    = memory.GetRegister(Memory::PC);
-            uint32_t const newPcValue = pcValue + offset * 4;
+            // PC is not advanced yet
+            uint32_t const newPcValue = pcValue + 4 + offset * 4;
 
             memory.SetRegister(Memory::PC, newPcValue);
         }
