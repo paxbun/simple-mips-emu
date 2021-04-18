@@ -9,6 +9,32 @@
 
 namespace fs = std::filesystem;
 
+namespace
+{
+
+std::vector<uint8_t> MakeBytesFromWords(std::vector<uint32_t>::iterator begin,
+                                        std::vector<uint32_t>::iterator end)
+{
+    size_t numBytes { static_cast<size_t>(std::distance(begin, end) * 4) };
+
+    std::vector<uint8_t> rtn(numBytes, 0);
+
+    auto rtnIt = rtn.begin();
+    for (auto it = begin; it != end; ++it)
+    {
+        uint32_t word = *it;
+        // MIPS uses big-endian
+        *(rtnIt++) = static_cast<uint8_t>((word & 0xFF000000) >> 24);
+        *(rtnIt++) = static_cast<uint8_t>((word & 0x00FF0000) >> 16);
+        *(rtnIt++) = static_cast<uint8_t>((word & 0x0000FF00) >> 8);
+        *(rtnIt++) = static_cast<uint8_t>((word & 0x000000FF) >> 0);
+    }
+
+    return rtn;
+}
+
+}
+
 FileReadResult ReadFile(std::filesystem::path const& path)
 {
     if (fs::is_directory(path))
@@ -29,6 +55,10 @@ FileReadResult ReadFile(std::istream& is)
     uint32_t    value;
     while (std::getline(is, line))
     {
+        if (std::find_if(line.begin(), line.end(), [](char c) { return !isspace(c); })
+            == line.end())
+            continue;
+
         if (line.size() < 3)
             return CannotRead { FileReadError::Type::InvalidFormat };
 
@@ -40,6 +70,8 @@ FileReadResult ReadFile(std::istream& is)
 
         if (result.ec != std::errc {})
             return CannotRead { FileReadError::Type::InvalidFormat };
+
+        words.push_back(value);
     }
 
     if (words.size() < 2)
@@ -49,7 +81,7 @@ FileReadResult ReadFile(std::istream& is)
         return CannotRead { FileReadError::Type::SectionSizeDoesNotMatch };
 
     return CanRead {
-        std::vector(words.begin() + 2, words.begin() + 2 + words[0]),
-        std::vector(words.end() - words[1], words.end()),
+        MakeBytesFromWords(words.begin() + 2, words.begin() + 2 + words[0]),
+        MakeBytesFromWords(words.end() - words[1], words.end()),
     };
 }
