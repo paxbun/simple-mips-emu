@@ -1,6 +1,6 @@
 # Simple MIPS Emulator
 
-Simple MIPS emulator implementation.
+Simple MIPS emulator implementation. Please read [report.pdf](report.pdf) for more information.
 
 # License
 
