@@ -7,14 +7,18 @@
 #include "TestCommon.hh"
 #include <sstream>
 
-char const _validCase[] = "0x2\n"
-                          "0x4\n"
-                          "0x1234\n"
-                          "0x23452a45\n"
-                          "0x9876\n"
-                          "0x3DE1\n"
-                          "0x2457B\n"
-                          "0x78A5c16f\n";
+char const _validCase[] = R"===(
+    0x2
+    0x4
+
+    0x1234
+0x23452a45
+
+    0x9876
+    0x3DE1
+    0x2457B
+    0x78A5c16f
+)===";
 
 TEST(FileTest, ValidCase)
 {
@@ -48,4 +52,38 @@ TEST(FileTest, ValidCase)
 
         ASSERT_EQ_VECTOR(file.data, expected, *lit, *rit);
     }
+}
+
+char const _invalidFormat[] = R"===(
+    alksjd
+    Hello, world!
+    0x12345678
+)===";
+
+TEST(FileTest, InvalidFormat)
+{
+    std::istringstream iss { _invalidFormat };
+
+    FileReadResult result = ReadFile(iss);
+    ASSERT_TRUE(std::holds_alternative<CannotRead>(result));
+
+    CannotRead error = std::get<CannotRead>(result);
+    ASSERT_EQ(error.error.type, FileReadError::Type::InvalidFormat);
+}
+
+char const _invalidSectionSize[] = R"===(
+    0x2
+    0x4
+    0x1236
+)===";
+
+TEST(FileTest, InvalidSectionSize)
+{
+    std::istringstream iss { _invalidSectionSize };
+
+    FileReadResult result = ReadFile(iss);
+    ASSERT_TRUE(std::holds_alternative<CannotRead>(result));
+
+    CannotRead error = std::get<CannotRead>(result);
+    ASSERT_EQ(error.error.type, FileReadError::Type::SectionSizeDoesNotMatch);
 }
