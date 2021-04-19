@@ -229,7 +229,7 @@ TickResult TickHandleJ(Memory& memory, uint32_t current)
 {
     uint32_t const operation = (current >> 26) & 0b111111;
     uint32_t const pcValue   = memory.GetRegister(Memory::PC);
-    uint32_t const target    = ((current & 0x03FFFFFF) << 2) | (pcValue & 0xF0000000);
+    uint32_t const target    = ((current & 0x03FFFFFF) << 2) | ((pcValue + 4) & 0xF0000000);
 
     if (operation == static_cast<uint32_t>(JFormatOp::J))
     {
